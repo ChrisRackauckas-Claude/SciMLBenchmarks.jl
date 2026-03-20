@@ -385,7 +385,7 @@ The following were omitted from the tests due to convergence failures.
 ```julia
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
-setups = [Dict(:alg=>Rosenbrock23()),
+setups = [Dict(:alg=>Rosenbrock23(autodiff=false)),
           Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
@@ -402,13 +402,13 @@ plot(wp)
 ```
 
 ```julia
-setups = [Dict(:alg=>Rosenbrock23()),
+setups = [Dict(:alg=>Rosenbrock23(autodiff=false)),
           Dict(:alg=>Kvaerno3()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>KenCarp3()),
-          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas4(autodiff=false)),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau())]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
@@ -418,7 +418,7 @@ plot(wp)
 ```
 
 ```julia
-setups = [Dict(:alg=>Rosenbrock23()),
+setups = [Dict(:alg=>Rosenbrock23(autodiff=false)),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>ImplicitEulerExtrapolation()),
           Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
@@ -444,8 +444,8 @@ setups = [Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
-          Dict(:alg=>Rodas4()),
-          Dict(:alg=>Rodas5P()),
+          Dict(:alg=>Rodas4(autodiff=false)),
+          Dict(:alg=>Rodas5P(autodiff=false)),
           Dict(:alg=>rodas()),
           Dict(:alg=>radau()),
           Dict(:alg=>lsoda()),
@@ -462,8 +462,8 @@ setups = [Dict(:alg=>Kvaerno4()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>KenCarp5()),
-          Dict(:alg=>Rodas4()),
-          Dict(:alg=>Rodas5P()),
+          Dict(:alg=>Rodas4(autodiff=false)),
+          Dict(:alg=>Rodas5P(autodiff=false)),
           Dict(:alg=>radau()),
           Dict(:alg=>ImplicitEulerExtrapolation()),
           Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
@@ -487,8 +487,8 @@ reltols = 1.0 ./ 10.0 .^ (7:9)
 setups = [
             Dict(:alg=>CVODE_BDF()),
             Dict(:alg=>KenCarp4()),
-            Dict(:alg=>Rodas4()),
-            Dict(:alg=>Rodas5P()),
+            Dict(:alg=>Rodas4(autodiff=false)),
+            Dict(:alg=>Rodas5P(autodiff=false)),
             Dict(:alg=>QNDF()),
             Dict(:alg=>lsoda()),
             Dict(:alg=>radau()),
