@@ -65,9 +65,7 @@ const B_emep = [0.60, 1.40, 0.40, 0.75, 1.25,
 
 function emepcf!(time, rc, dj, h2o_out)
     timeh = time / 3600.0
-    itimeh = floor(Int, timeh)
-    i24hrs = itimeh ÷ 24 + 1
-    timeod = timeh - (i24hrs - 1) * 24.0
+    timeod = mod(timeh, 24.0)
 
     pi_val = 4.0 * atan(1.0)
     xlha = (1.0 + timeod * 3600.0 / 4.32e4) * pi_val
@@ -214,9 +212,10 @@ function emepcf!(time, rc, dj, h2o_out)
 end
 
 function emep!(dy, y, p, t)
-    rc = zeros(NRC_emep)
-    dj = zeros(NDJ_emep)
-    h2o_ref = Ref(0.0)
+    T = promote_type(eltype(dy), typeof(t))
+    rc = zeros(T, NRC_emep)
+    dj = zeros(T, NDJ_emep)
+    h2o_ref = Ref(zero(T))
     emepcf!(t, rc, dj, h2o_ref)
     h2o = h2o_ref[]
 
@@ -385,7 +384,7 @@ The following were omitted from the tests due to convergence failures.
 ```julia
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
-setups = [Dict(:alg=>Rosenbrock23(autodiff=false)),
+setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
@@ -402,13 +401,13 @@ plot(wp)
 ```
 
 ```julia
-setups = [Dict(:alg=>Rosenbrock23(autodiff=false)),
+setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>Kvaerno3()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>KenCarp3()),
-          Dict(:alg=>Rodas4(autodiff=false)),
+          Dict(:alg=>Rodas4()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau())]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
@@ -418,7 +417,7 @@ plot(wp)
 ```
 
 ```julia
-setups = [Dict(:alg=>Rosenbrock23(autodiff=false)),
+setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>ImplicitEulerExtrapolation()),
           Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
@@ -444,8 +443,8 @@ setups = [Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
-          Dict(:alg=>Rodas4(autodiff=false)),
-          Dict(:alg=>Rodas5P(autodiff=false)),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
           Dict(:alg=>rodas()),
           Dict(:alg=>radau()),
           Dict(:alg=>lsoda()),
@@ -462,8 +461,8 @@ setups = [Dict(:alg=>Kvaerno4()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>KenCarp5()),
-          Dict(:alg=>Rodas4(autodiff=false)),
-          Dict(:alg=>Rodas5P(autodiff=false)),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
           Dict(:alg=>radau()),
           Dict(:alg=>ImplicitEulerExtrapolation()),
           Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
@@ -487,8 +486,8 @@ reltols = 1.0 ./ 10.0 .^ (7:9)
 setups = [
             Dict(:alg=>CVODE_BDF()),
             Dict(:alg=>KenCarp4()),
-            Dict(:alg=>Rodas4(autodiff=false)),
-            Dict(:alg=>Rodas5P(autodiff=false)),
+            Dict(:alg=>Rodas4()),
+            Dict(:alg=>Rodas5P()),
             Dict(:alg=>QNDF()),
             Dict(:alg=>lsoda()),
             Dict(:alg=>radau()),
