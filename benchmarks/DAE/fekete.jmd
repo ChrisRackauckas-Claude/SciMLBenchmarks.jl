@@ -699,7 +699,7 @@ labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "QNDF (MM)" "IDA (DAE)" "DASK
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
+    maxiters = Int(1e6), numruns = 2)
 plot(wp, title = "Fekete Problem: All Formulations (High Tol)")
 ```
 
@@ -723,7 +723,7 @@ labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "IDA (DAE)" "DASKR (DAE)" "Ro
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
+    maxiters = Int(1e6), numruns = 2)
 plot(wp, title = "Fekete Problem: MM vs DAE vs MTK (High Tol)")
 ```
 
@@ -740,8 +740,6 @@ setups = [
     Dict(:prob_choice => 1, :alg => Rodas5P()),
     Dict(:prob_choice => 1, :alg => FBDF()),
     Dict(:prob_choice => 1, :alg => QNDF()),
-    Dict(:prob_choice => 1, :alg => radau()),
-    Dict(:prob_choice => 1, :alg => RadauIIA5()),
     Dict(:prob_choice => 2, :alg => IDA(), :verbose => false),
     Dict(:prob_choice => 2, :alg => DASKR.daskr(), :verbose => false),
     Dict(:prob_choice => 3, :alg => Rodas5P()),
@@ -749,11 +747,11 @@ setups = [
     Dict(:prob_choice => 3, :alg => FBDF()),
 ]
 
-labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "QNDF (MM)" "radau (MM)" "RadauIIA5 (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
+labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "QNDF (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
     names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
+    maxiters = Int(1e6), numruns = 2)
 plot(wp, title = "Fekete Problem: Timeseries (L2)")
 ```
 
@@ -774,7 +772,7 @@ labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "IDA (DAE)" "DASKR (DAE)" "Ro
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
     names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
+    maxiters = Int(1e6), numruns = 2)
 plot(wp, title = "Fekete Problem: MM vs DAE vs MTK Timeseries (L2)")
 ```
 
@@ -792,8 +790,6 @@ setups = [
     Dict(:prob_choice => 1, :alg => Rodas4()),
     Dict(:prob_choice => 1, :alg => FBDF()),
     Dict(:prob_choice => 1, :alg => QNDF()),
-    Dict(:prob_choice => 1, :alg => radau()),
-    Dict(:prob_choice => 1, :alg => RadauIIA5()),
     Dict(:prob_choice => 2, :alg => IDA()),
     Dict(:prob_choice => 2, :alg => DASKR.daskr()),
     Dict(:prob_choice => 3, :alg => Rodas5P()),
@@ -801,18 +797,18 @@ setups = [
     Dict(:prob_choice => 3, :alg => FBDF()),
 ]
 
-labels = ["Rodas5 (MM)" "Rodas5P (MM)" "Rodas4 (MM)" "FBDF (MM)" "QNDF (MM)" "radau (MM)" "RadauIIA5 (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
+labels = ["Rodas5 (MM)" "Rodas5P (MM)" "Rodas4 (MM)" "FBDF (MM)" "QNDF (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
+    maxiters = Int(1e6), numruns = 2)
 plot(wp, title = "Fekete Problem: Low Tolerances")
 ```
 
 ```julia
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
     names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
+    maxiters = Int(1e6), numruns = 2)
 plot(wp, title = "Fekete Problem: Low Tolerances (L2)")
 ```
 
