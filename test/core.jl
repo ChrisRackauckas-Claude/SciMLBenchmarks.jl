@@ -44,6 +44,14 @@ end
     end
 end
 
+@testset "V100 PyTorch runtime" begin
+    benchmarks_dir = joinpath(dirname(@__DIR__), "benchmarks")
+    conda_dependencies = read(joinpath(benchmarks_dir, "DiffEqGPU", "CondaPkg.toml"), String)
+    @test occursin("version = \"==2.5.1\"", conda_dependencies)
+    @test occursin("version = \"==12.4\"", conda_dependencies)
+    @test !occursin("torch =", conda_dependencies)
+end
+
 @testset "weave_file" begin
     benchmarks_dir = joinpath(dirname(@__DIR__), "benchmarks")
     SciMLBenchmarks.weave_file(joinpath(benchmarks_dir, "Testing"), "test.jmd")
