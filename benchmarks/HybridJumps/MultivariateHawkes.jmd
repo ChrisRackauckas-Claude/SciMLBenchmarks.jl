@@ -380,8 +380,7 @@ if BENCHMARK_PYTHON
 
         # PyCall only works with Conda.ROOTENV
         # tick requires python=3.8
-        Conda.add("python=3.8", Conda.ROOTENV)
-        Conda.add("numpy", Conda.ROOTENV)
+        Conda.add(["python=3.8", "conda<24", "numpy"], Conda.ROOTENV)
         Conda.pip_interop(true, Conda.ROOTENV)
         Conda.pip("install", "tick", Conda.ROOTENV)
 
