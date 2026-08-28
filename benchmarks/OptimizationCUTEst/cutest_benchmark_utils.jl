@@ -59,6 +59,7 @@ function optimizer_from_name(name)
             "max_wall_time" => SOLVE_TIMEOUT_SECONDS,
             "tol" => 1.0e-6,
             "print_level" => 0,
+            "hessian_approximation" => "limited-memory",
         )
     else
         error("Unknown optimizer: $name")
