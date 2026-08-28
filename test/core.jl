@@ -41,3 +41,13 @@ end
     @test isfile(output)
     @test occursin("To locally run this benchmark", read(output, String))
 end
+
+@testset "LinearSolveGPU CUDA runtime preference" begin
+    benchmark_dir = joinpath(dirname(@__DIR__), "benchmarks", "LinearSolveGPU")
+    preferences = read(joinpath(benchmark_dir, "LocalPreferences.toml"), String)
+    project = read(joinpath(benchmark_dir, "Project.toml"), String)
+    @test occursin("version = \"12.9\"", preferences)
+    @test occursin(
+        "CUDA_Runtime_jll = \"76a88914-d11a-5bdc-97e0-2f5a05c973a2\"", project
+    )
+end
