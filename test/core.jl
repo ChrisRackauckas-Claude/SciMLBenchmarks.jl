@@ -45,6 +45,14 @@ end
     end
 end
 
+@testset "closed pull request cancellation" begin
+    workflow = read(joinpath(dirname(@__DIR__), ".github", "workflows", "benchmarks.yml"), String)
+    @test occursin("types: [opened, synchronize, reopened, closed]", workflow)
+    @test occursin("format('pr-{0}', github.event.pull_request.number)", workflow)
+    @test occursin("github.event_name == 'pull_request' || github.ref != 'refs/heads/master'", workflow)
+    @test occursin("github.event.action != 'closed'", workflow)
+end
+
 @testset "weave_file" begin
     benchmarks_dir = joinpath(dirname(@__DIR__), "benchmarks")
     SciMLBenchmarks.weave_file(joinpath(benchmarks_dir, "Testing"), "test.jmd")
