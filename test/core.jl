@@ -135,6 +135,7 @@ end
     @test !occursin("DiffEqMonteCarlo", qmax)
     @test !occursin("maxIters", qmax)
     @test count("controller = PIController(alg; qmax = qs[", qmax) == 2
+    @test occursin("local monte_prob = EnsembleProblem(probs[k])", qmax)
 end
 
 @testset "weave_file" begin

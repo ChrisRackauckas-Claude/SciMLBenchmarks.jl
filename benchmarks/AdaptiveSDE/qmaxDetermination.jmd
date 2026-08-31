@@ -75,7 +75,7 @@ for k in eachindex(probs)
     global probs, times, means, qs
     println("Problem $k")
     ## Setup
-    prob = probs[k]
+    local monte_prob = EnsembleProblem(probs[k])
 
     for i in eachindex(qs)
         alg = SRIW1()
