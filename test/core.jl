@@ -125,6 +125,18 @@ end
     @test checked == count("names = names", benchmark)
 end
 
+@testset "AdaptiveSDE current APIs" begin
+    benchmarks_dir = joinpath(dirname(@__DIR__), "benchmarks", "AdaptiveSDE")
+    efficiency = read(joinpath(benchmarks_dir, "AdaptiveEfficiencyTests.jmd"), String)
+    qmax = read(joinpath(benchmarks_dir, "qmaxDetermination.jmd"), String)
+
+    @test !occursin("calculate_monte_errors", efficiency)
+    @test !occursin("calculate_monte_errors", qmax)
+    @test !occursin("DiffEqMonteCarlo", qmax)
+    @test !occursin("maxIters", qmax)
+    @test count("controller = PIController(alg; qmax = qs[", qmax) == 2
+end
+
 @testset "weave_file" begin
     benchmarks_dir = joinpath(dirname(@__DIR__), "benchmarks")
     SciMLBenchmarks.weave_file(joinpath(benchmarks_dir, "Testing"), "test.jmd")
