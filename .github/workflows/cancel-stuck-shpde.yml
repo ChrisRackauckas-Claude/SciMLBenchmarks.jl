@@ -1,0 +1,19 @@
+name: Cancel stuck SimpleHandwrittenPDE run
+
+on:
+  push:
+    branches:
+      - ops/cancel-stuck-shpde-20260901
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cancel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Force-cancel obsolete run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST repos/SciML/SciMLBenchmarks.jl/actions/runs/33306014679/force-cancel
