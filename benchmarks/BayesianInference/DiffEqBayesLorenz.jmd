@@ -11,17 +11,21 @@ using DiffEqCallbacks, StaticArrays
 using Distributions, StanSample, DynamicHMC, Turing
 using OrdinaryDiffEq, RecursiveArrayTools, ParameterizedFunctions, DiffEqCallbacks
 using Plots, LinearAlgebra
+using StatsBase: summarystats
+using Tables
 ```
 
 ```julia
 """Display ESS/s (effective samples per second) from a Turing chain."""
 function display_ess_per_sec(chain, elapsed)
     stats = summarystats(chain)
-    ess_bulk = stats[:, :ess_bulk]
+    columns = Tables.columntable(stats)
+    parameters = hasproperty(columns, :parameters) ? columns.parameters : columns.param
+    ess_bulk = columns.ess_bulk
     println("Elapsed time: $(round(elapsed; digits=2)) seconds\n")
     println("ESS/s (effective samples per second, bulk):")
-    for (i, param) in enumerate(stats[:, :parameters])
-        println("  $param: $(round(ess_bulk[i] / elapsed; digits=1))")
+    for (param, ess) in zip(parameters, ess_bulk)
+        println("  $param: $(round(ess / elapsed; digits=1))")
     end
     println("\nMinimum ESS/s (bulk): $(round(minimum(ess_bulk) / elapsed; digits=1))")
 end

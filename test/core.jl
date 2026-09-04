@@ -215,7 +215,7 @@ end
     @test checked == count("names = names", benchmark)
 end
 
-@testset "BayesianInference solution state indexing" begin
+@testset "BayesianInference Turing compatibility" begin
     folder = joinpath(dirname(@__DIR__), "benchmarks", "BayesianInference")
     benchmarks = (
         "DiffEqBayesFitzHughNagumo.jmd",
@@ -226,6 +226,11 @@ end
         source = read(joinpath(folder, benchmark), String)
         @test !occursin("for i in 1:length(predicted)", source)
         @test !occursin("MvNormal(predicted[i]", source)
+        @test occursin("using StatsBase: summarystats", source)
+        @test occursin("using Tables", source)
+        @test occursin("Tables.columntable(stats)", source)
+        @test !occursin("stats[:, :ess_bulk]", source)
+        @test !occursin("stats[:, :parameters]", source)
     end
 end
 
