@@ -215,6 +215,16 @@ end
     @test checked == count("names = names", benchmark)
 end
 
+@testset "HybridJumps saving callback API" begin
+    benchmark = read(
+        joinpath(dirname(@__DIR__), "benchmarks", "HybridJumps", "Synapse.jmd"), String
+    )
+    has_public_import = occursin("using SciMLBase: u_modified!", benchmark)
+    uses_unavailable_api = occursin("derivative_discontinuity!", benchmark)
+    @test has_public_import
+    @test !uses_unavailable_api
+end
+
 @testset "weave_file" begin
     benchmarks_dir = joinpath(dirname(@__DIR__), "benchmarks")
     SciMLBenchmarks.weave_file(joinpath(benchmarks_dir, "Testing"), "test.jmd")
