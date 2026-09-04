@@ -33,6 +33,14 @@ end
     end
 end
 
+@testset "NonStiffSDE runtime limit" begin
+    config = joinpath(dirname(@__DIR__), "benchmarks", "NonStiffSDE", "benchmark_config.toml")
+    @test isfile(config)
+    if isfile(config)
+        @test occursin(r"(?m)^timeout = 480$", read(config, String))
+    end
+end
+
 function benchmark_assignment(path, variable)
     prefix = string(variable, " = ")
     line = only(line for line in eachline(path) if startswith(strip(line), prefix))
