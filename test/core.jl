@@ -78,6 +78,67 @@ end
     @test occursin("import PowerModels\nPowerModels.silence()", benchmark)
 end
 
+@testset "OptimizationFrameworks backend size limits" begin
+    benchmark = read(
+        joinpath(
+            dirname(@__DIR__),
+            "benchmarks",
+            "OptimizationFrameworks",
+            "optimal_powerflow.jmd",
+        ),
+        String,
+    )
+    @test occursin("MTK_SIZE_LIMIT = 200", benchmark)
+    mtk_guard = match(
+        r"(?ms)if model_variables > MTK_SIZE_LIMIT(?<skip>.*?)else(?<run>.*?)end\n\n        @info \"Running JuMP.jl\"",
+        benchmark,
+    )
+    @test !isnothing(mtk_guard)
+    if !isnothing(mtk_guard)
+        @test count("push!(mtk_", mtk_guard[:skip]) == 4
+        @test !occursin("solve_opf_mtk", mtk_guard[:skip])
+        @test occursin("solve_opf_mtk", mtk_guard[:run])
+
+        run_guard = Core.eval(
+            @__MODULE__,
+            Meta.parse(
+                """
+                function (model_variables, solve_opf_mtk)
+                    dataset = nothing
+                    mtk_time = Float64[]
+                    mtk_time_modelbuild = Float64[]
+                    mtk_time_compilation = Float64[]
+                    mtk_cost = Float64[]
+                    if model_variables > 200
+                        $(mtk_guard[:skip])
+                    else
+                        $(mtk_guard[:run])
+                    end
+                    return mtk_time, mtk_time_modelbuild, mtk_time_compilation, mtk_cost
+                end
+                """,
+            ),
+        )
+        calls = Ref(0)
+        solve_opf_mtk = _ -> begin
+            calls[] += 1
+            return nothing,
+                Dict(
+                    "time_solve" => 1.0,
+                    "time_build" => 2.0,
+                    "time_solve_compilation" => 3.0,
+                    "cost" => 4.0,
+                )
+        end
+        skipped = Base.invokelatest(run_guard, 201, solve_opf_mtk)
+        @test calls[] == 0
+        @test all(values -> all(isnan, values), skipped)
+        ran = Base.invokelatest(run_guard, 200, solve_opf_mtk)
+        @test calls[] == 1
+        @test ran == ([1.0], [2.0], [3.0], [4.0])
+    end
+end
+
 @testset "subprocess" begin
     process = SciMLBenchmarks.@subprocess exit()
     @test success(process)

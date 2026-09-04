@@ -20,6 +20,9 @@ MAX_CPU_TIME = 100.0
 # This is for testing. 100 is a good size for running a test of changes
 # Should be set to typemax(Int) to run the whole benchmark
 SIZE_LIMIT = 1000
+
+# Constraint Hessian generation grows much faster than the other backends.
+MTK_SIZE_LIMIT = 200
 ```
 
 ```julia
@@ -2443,12 +2446,20 @@ function multidata_multisolver_benchmark(dataset_files; sizelimit = SIZE_LIMIT)
         push!(optimization_time_compilation, res["time_solve_compilation"])
         push!(optimization_cost, res["cost"])
 
-        @info "Running ModelingToolkit.jl"
-        model, res = solve_opf_mtk(dataset)
-        push!(mtk_time, res["time_solve"])
-        push!(mtk_time_modelbuild, res["time_build"])
-        push!(mtk_time_compilation, res["time_solve_compilation"])
-        push!(mtk_cost, res["cost"])
+        if model_variables > MTK_SIZE_LIMIT
+            @info "Variable size over ModelingToolkit limit. Skipping for now"
+            push!(mtk_time, NaN)
+            push!(mtk_time_modelbuild, NaN)
+            push!(mtk_time_compilation, NaN)
+            push!(mtk_cost, NaN)
+        else
+            @info "Running ModelingToolkit.jl"
+            model, res = solve_opf_mtk(dataset)
+            push!(mtk_time, res["time_solve"])
+            push!(mtk_time_modelbuild, res["time_build"])
+            push!(mtk_time_compilation, res["time_solve_compilation"])
+            push!(mtk_cost, res["cost"])
+        end
 
         @info "Running JuMP.jl"
         model, res = solve_opf_jump(dataset)
