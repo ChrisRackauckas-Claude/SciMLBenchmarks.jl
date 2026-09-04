@@ -215,6 +215,16 @@ end
     @test checked == count("names = names", benchmark)
 end
 
+@testset "HybridJumps Hawkes scaling range" begin
+    benchmark = read(
+        joinpath(dirname(@__DIR__), "benchmarks", "HybridJumps", "MultivariateHawkes.jmd"),
+        String,
+    )
+    ranges = collect(eachmatch(r"Vs = append!\(\[1\], 5:5:(\d+)\)", benchmark))
+    @test length(ranges) == 2
+    @test all(result -> only(result.captures) == "90", ranges)
+end
+
 @testset "weave_file" begin
     benchmarks_dir = joinpath(dirname(@__DIR__), "benchmarks")
     SciMLBenchmarks.weave_file(joinpath(benchmarks_dir, "Testing"), "test.jmd")
