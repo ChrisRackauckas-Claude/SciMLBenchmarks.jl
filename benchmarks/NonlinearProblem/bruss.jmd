@@ -399,8 +399,6 @@ solvers_scaling = [
         name = "Mod. Powell [MINPACK]", alg = CMINPACK())
 ]
 
-gc_was_enabled = GC.enable(false) # for PETSc
-
 runtimes_scaling = fill(-1.0, length(solvers_scaling), length(Ns))
 
 for (i, N) in enumerate(Ns)
@@ -444,13 +442,27 @@ for (i, N) in enumerate(Ns)
             @warn "$(name): Would Have Timed out"
         else
             function benchmark_function()
-                termination_condition = (alg isa PETScSNES || alg isa KINSOL) ?
-                                        nothing :
-                                        AbsNormTerminationMode(Base.Fix1(maximum, abs))
-                sol = solve(prob, alg; abstol = 1e-6, reltol = 1e-6, termination_condition)
-                runtimes_scaling[j, i] = @belapsed solve($prob, $alg; abstol = 1e-6,
-                    reltol = 1e-6, termination_condition = $termination_condition)
-                @info "$(name): $(runtimes_scaling[j, i]) | $(norm(sol.resid, Inf)) | $(sol.retcode)"
+                function run_solve()
+                    termination_condition = (alg isa PETScSNES || alg isa KINSOL) ?
+                                            nothing :
+                                            AbsNormTerminationMode(Base.Fix1(maximum, abs))
+                    sol = solve(prob, alg; abstol = 1e-6, reltol = 1e-6,
+                        termination_condition)
+                    runtimes_scaling[j, i] = @belapsed solve($prob, $alg; abstol = 1e-6,
+                        reltol = 1e-6, termination_condition = $termination_condition)
+                    @info "$(name): $(runtimes_scaling[j, i]) | $(norm(sol.resid, Inf)) | $(sol.retcode)"
+                end
+
+                if alg isa PETScSNES
+                    gc_was_enabled = GC.enable(false)
+                    try
+                        run_solve()
+                    finally
+                        GC.enable(gc_was_enabled)
+                    end
+                else
+                    run_solve()
+                end
             end
 
             timeout(benchmark_function, 600)
@@ -464,8 +476,6 @@ for (i, N) in enumerate(Ns)
 
     println()
 end
-
-GC.enable(gc_was_enabled)
 
 # Normalize timeout sentinels for plotting (log-scale).
 runtimes_scaling = map(x -> x == -1 ? NaN : x, runtimes_scaling)

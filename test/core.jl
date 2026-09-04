@@ -215,17 +215,21 @@ end
     @test checked == count("names = names", benchmark)
 end
 
-@testset "NonlinearProblem restores garbage collection" begin
+@testset "NonlinearProblem scopes garbage collection suspension to PETSc" begin
     benchmark = read(
         joinpath(dirname(@__DIR__), "benchmarks", "NonlinearProblem", "bruss.jmd"), String
     )
+    petsc_guard = findfirst("if alg isa PETScSNES", benchmark)
     disabled = findfirst("gc_was_enabled = GC.enable(false)", benchmark)
     restored = findfirst("GC.enable(gc_was_enabled)", benchmark)
+    timed = findfirst("timeout(benchmark_function, 600)", benchmark)
     normalized = findfirst("# Normalize timeout sentinels", benchmark)
 
-    @test all(marker -> !isnothing(marker), (disabled, restored, normalized))
-    if all(marker -> !isnothing(marker), (disabled, restored, normalized))
-        @test first(disabled) < first(restored) < first(normalized)
+    markers = (petsc_guard, disabled, restored, timed, normalized)
+    @test all(marker -> !isnothing(marker), markers)
+    if all(marker -> !isnothing(marker), markers)
+        @test first(petsc_guard) < first(disabled) < first(restored) < first(timed) <
+            first(normalized)
     end
 end
 
