@@ -215,6 +215,20 @@ end
     @test checked == count("names = names", benchmark)
 end
 
+@testset "BayesianInference solution state indexing" begin
+    folder = joinpath(dirname(@__DIR__), "benchmarks", "BayesianInference")
+    benchmarks = (
+        "DiffEqBayesFitzHughNagumo.jmd",
+        "DiffEqBayesLorenz.jmd",
+        "DiffEqBayesLotkaVolterra.jmd",
+    )
+    for benchmark in benchmarks
+        source = read(joinpath(folder, benchmark), String)
+        @test !occursin("for i in 1:length(predicted)", source)
+        @test !occursin("MvNormal(predicted[i]", source)
+    end
+end
+
 @testset "weave_file" begin
     benchmarks_dir = joinpath(dirname(@__DIR__), "benchmarks")
     SciMLBenchmarks.weave_file(joinpath(benchmarks_dir, "Testing"), "test.jmd")

@@ -164,8 +164,8 @@ We use per-dimension noise parameters (matching Stan) with `InverseGamma(2, 3)` 
     predicted = solve(_prob, Vern9(); saveat = t)
 
     # Observations.
-    for i in 1:length(predicted)
-        data[:, i] ~ MvNormal(predicted[i], Diagonal(σ .^ 2))
+    for i in eachindex(predicted.u)
+        data[:, i] ~ MvNormal(predicted.u[i], Diagonal(σ .^ 2))
     end
 
     return nothing
