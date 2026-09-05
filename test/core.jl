@@ -56,12 +56,15 @@ end
     caps_callback_specialization =
         occursin("vr_agg isa VR_FRM ? Gs[Vs .<= 40] : Gs", benchmark)
     widens_performance_plots = length(findall("size = (800, 400)", benchmark)) == 2
+    uses_concise_variable_rate_title =
+        occursin("Variable-rate simulations: nodes × time", benchmark)
     @test uses_vector_jump_sets
     @test defaults_to_wrapped_direct
     @test !splats_jumps
     @test interpolates_benchmark_inputs
     @test caps_callback_specialization
     @test widens_performance_plots
+    @test uses_concise_variable_rate_title
 end
 
 @testset "DiffEqGPU singleton parameter grids" begin

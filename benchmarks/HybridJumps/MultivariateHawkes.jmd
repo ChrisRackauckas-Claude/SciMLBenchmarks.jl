@@ -922,7 +922,7 @@ let fig = plot(
         end
         plot!(_Vs, _bs, label=label)
     end
-    title!("Variable Rate Simulations, 50 samples: nodes × time")
+    title!("Variable-rate simulations: nodes × time")
 end
 ```
 
