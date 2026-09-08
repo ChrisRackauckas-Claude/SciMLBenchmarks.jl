@@ -147,13 +147,13 @@ function nernst_planck(strategy, minimizer, maxIters)
 
     phi = discretization.phi
 
-    params = res.minimizer
+    params = res.u
 
     # Model prediction
     domain = [ts, xs, ys, zs]
 
     u_predict = [reshape(
-                     [Array(phi([t, x, y, z], res.minimizer)) for x in xs for y in ys for z in zs],
+                     [Array(phi([t, x, y, z], res.u)) for x in xs for y in ys for z in zs],
                      (length(xs), length(ys), length(zs))) for t in ts]
 
     return [error, params, domain, times]

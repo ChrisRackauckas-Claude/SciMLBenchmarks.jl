@@ -101,12 +101,12 @@ function diffusion(strategy, minimizer, maxIters)
     res = Optimization.solve(prob, minimizer; callback = cb_, maxiters = maxIters)
     phi = discretization.phi
 
-    params = res.minimizer
+    params = res.u
 
     # Model prediction
     domain = [x, t]
 
-    u_predict = reshape([first(Array(phi([x, t], res.minimizer))) for x in xs for t in ts], (
+    u_predict = reshape([first(Array(phi([x, t], res.u))) for x in xs for t in ts], (
         length(xs), length(ts)))
 
     return [error, params, domain, times, u_predict, losses]

@@ -144,12 +144,12 @@ function level_set(strategy, minimizer, maxIters)
 
     phi = discretization.phi
 
-    params = res.minimizer
+    params = res.u
 
     # Model prediction
     domain = [ts, xs, ys]
 
-    u_predict = [reshape([first(Array(phi([t, x, y], res.minimizer))) for x in xs for y in ys],
+    u_predict = [reshape([first(Array(phi([t, x, y], res.u))) for x in xs for y in ys],
                      (length(xs), length(ys))) for t in ts]  #matrix of model's prediction
 
     return [error, params, domain, times, losses] #add numeric solution
