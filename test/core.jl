@@ -251,6 +251,7 @@ end
     @test occursin("CUDA = \"5\"", project)
     @test occursin("cuDNN = \"=1.4.4\"", project)
     @test occursin("Reactant = \"=0.2.171\"", project)
+    @test occursin("GPUCompiler = \"=1.9.1\"", project)
     @test occursin(
         r"(?s)\[\[deps\.CUDNN_jll\]\].*?version = \"9\.10\.0\+0\"", manifest
     )
@@ -261,7 +262,7 @@ end
         r"(?s)\[\[deps\.Reactant_jll\]\].*?version = \"0\.0\.251\+0\"", manifest
     )
     @test occursin(
-        r"(?s)\[\[deps\.GPUCompiler\]\].*?pinned = true.*?version = \"1\.9\.1\"", manifest
+        r"(?s)\[\[deps\.GPUCompiler\]\].*?version = \"1\.9\.1\"", manifest
     )
     @test occursin("torch = \">=2.0,<2.11\"", python_dependencies)
     @test occursin(
